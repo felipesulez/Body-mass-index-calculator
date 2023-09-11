@@ -1,54 +1,37 @@
-# importing libraries
-
 from rich import print
 from rich.console import Console
 
-
-
 console = Console()
 
+def greetings(name):
+    return f"My name is {name}"
 
-
-
-def greetings (prompt):
-    val = f'my name is {prompt}'
-
-
-    return val
-
-def name():
-    a = input("\n Enter a name : ")
-    b = input('\n Enter the name of your highschool :')
-    console.print(a,style='bold green')
-
-    return a, b
-
-
-
+def name_input():
     
+    name = input("\nEnter your name: ")
+    school = input("Enter the name of your high school: ")
+    console.print(name, school, style="bold green")
+    return name, school
 
-
-
-
-a = input("\n Enter a name : ")
-b = input('\n Enter the name of your highschool :')
-
-
-def highschool(name):
-    hs = f'the name of my highschool is {name}'
-    return hs
+def high_school(name):
+    return f"The name of my high school is {name}"
 
 def main():
+
     def surname(surname_string):
-        s = f'my surname is {surname_string}'
-        n = f'{greetings(a)}'+ ' ' + 'and' + ' ' + s + ' ' 'and' + ' ' + f'{highschool(b)}' + '\n'
-        console.print('call the name function', style='bold magenta')
-        name()
-        return n
-    print(surname(input('\n Enter your surname:')))
+        name, school = name_input()
+        surname_text = f"My surname is {surname_string}"
+        full_text = f"{greetings(name)} and {surname_text} and {high_school(school)}\n"
+        console.print("Calling the name_input function", style="bold magenta")
+        name_input()
+        return full_text
+
+    print(surname(input("\nEnter your surname: ")))
 
 if __name__ == "__main__":
     main()
+
+
 
 
 

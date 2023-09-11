@@ -19,7 +19,7 @@ def greetings (prompt):
 def name():
     a = input("\n Enter a name : ")
     b = input('\n Enter the name of your highschool :')
-    console.print(a,style='bold red')
+    console.print(a,style='bold green')
 
     return a, b
 

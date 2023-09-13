@@ -17,23 +17,24 @@ def input_string(prompt):
     return user_input
 
 def name_input():
-    global flag  # Declare flag as a global variable
+    global flag
 
-    name = input_string("\nEnter your name: ")
-    school = input_string("Enter the name of your high school: ")
-        
-    try: 
-        value1 = int(name)
-        value2 = int(school)
-
-        console.print(f'Warning, {value1} and {value2} are integers', style='bold magenta')
-        flag = False
-        return value1, value2
+    try:
+        name = input("\nEnter your name: ")
+        school = input("Enter the name of your high school: ")
+        if contains_special_characters(name) or contains_special_characters(school):
+            console.print('Warning, name and school should not contain special characters', style='bold magenta')
+            flag = False
+            return name, school
+        else:
+            print(f"{name} and {school} are strings")
+            flag = True
+            return name, school
 
     except ValueError:
-        print(f"{name} and {school} are strings")
-        flag = True
-        return name, school
+        console.print('Name and school should not be integers', style='bold magenta')
+        flag = False
+        return None, None
 
 def high_school(name):
     return f"The name of my high school is {name}"
@@ -41,13 +42,14 @@ def high_school(name):
 def main():
     def surname(surname_string):
 
-        try: 
+        
+        try:
             surname = int(surname_string)
-            console.print(f'\n {surname} is not', 
-                          'a string', style='bold red')
+            console.print(f'\n {surname} is not a string', style='bold red')
+                        
         except ValueError:
-            console. print(f'\n {surname} is a valid',
-                           'string', style='bold green')
+            console.print(f'\n {surname_string} is a valid string', style='bold green')
+        finally:
             name, school = name_input()
             surname_text = f"My surname is {surname_string}"
             if flag:
@@ -57,8 +59,9 @@ def main():
             else:
                 print('These values are not strings')
                 return None
-            
+
     print(surname(input("\nEnter your surname: ")))
 
 if __name__ == "__main__":
     main()
+

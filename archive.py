@@ -1,4 +1,3 @@
-from rich import print
 from rich.console import Console
 import re
 
@@ -8,49 +7,49 @@ def contains_special_characters(string_data):
     pattern = r'[!@#$%^&*()_+{}\[\]:;<>,.?~\\|]'
     return re.search(pattern, string_data) is not None
 
+def is_integer(string_data):
+    try:
+        int(string_data)
+        return True
+    except ValueError:
+        return False
+
+def get_valid_string_input(prompt):
+    while True:
+        user_input = input(prompt)
+        if user_input.lower() == 'exit':
+            return None
+        elif contains_special_characters(user_input):
+            console.print('Warning, the input should not contain special characters', style='bold magenta')
+        elif is_integer(user_input):
+            console.print('The input should not be an integer', style='bold magenta')
+        else:
+            return user_input
+
 def greetings(name):
     return f"My name is {name}"
-
-def input_string(prompt):
-    user_input = input(prompt)
-    return user_input
-
-def name_input():
-    while True:
-        name = input("\nEnter your name: ")
-        school = input("Enter the name of your high school: ")
-
-        if contains_special_characters(name) or contains_special_characters(school):
-            console.print('Warning, name and school should not contain special characters', style='bold magenta')
-        elif name.isdigit() or school.isdigit():
-            console.print('Name and school should not be integers', style='bold magenta')
-        else:
-            console.print(f"\n {name} and {school} are strings",
-                          style='bold green')
-            return name, school
 
 def high_school(name):
     return f"The name of my high school is {name}"
 
 def main():
-    surname_string = input("\nEnter your surname: ")
-
-    try:
-        surname = int(surname_string)
-        console.print(f'\n {surname} is not a string', style='bold red')
-    except ValueError:
-        console.print(f'\n {surname_string} is a valid string', style='bold green')
-        name, school = name_input()
-        if name and school:
-            surname_text = f"My surname is {surname_string}"
-            full_text = f"{greetings(name)} and {surname_text} and {high_school(school)}\n"
-            #console.print("Calling the name_input function", style="bold magenta")
-            console.print(f'\n {full_text}', 
-                  style = 'bold magenta')
+    while True:
+        surname_string = input("\nEnter your surname (type 'exit' to quit): ")
+        if surname_string.lower() == 'exit':
+            break
+        try:
+            int(surname_string)
+            console.print(f'\n {surname_string} is not a string', style='bold red')
+        except ValueError:
+            name = get_valid_string_input("\nEnter your name: ")
+            school = get_valid_string_input("Enter the name of your high school: ")
+            if name is not None and school is not None:
+                surname_text = f"My surname is {surname_string.capitalize()}"
+                full_text = f"{greetings(name)} and {surname_text} and {high_school(school)}\n"
+                console.print(f'\n{full_text}', style='bold magenta')
         else:
-            print('These values are not strings')
+            console.print('These values are not strings', style='bold magenta')
 
 if __name__ == "__main__":
     main()
-
 

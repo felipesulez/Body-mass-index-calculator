@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
+from kivy.uix.screenmanager import ScreenManager, Screen
 import re
 
 class UserInputValidator:
@@ -39,8 +40,10 @@ class UserDataProcessor:
     def high_school(name):
         return f"The name of my high school is {name}"
 
-class ConsoleApp(App):
-    def build(self):
+class MainScreen(Screen):
+    def __init__(self, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
+
         self.console_output = Label(text='', markup=True)
         self.result_label = Label(text='', markup=True)
         self.surname_input = TextInput(hint_text="Enter your surname (type 'exit' to quit)")
@@ -48,19 +51,22 @@ class ConsoleApp(App):
         self.school_input = TextInput(hint_text="Enter the name of your high school")
         self.submit_button = Button(text="Submit")
         self.submit_button.bind(on_release=self.process_input)
-        self.exit_button = Button(text="Exit")
-        self.exit_button.bind(on_release=self.exit_app)
+        self.secondary_button = Button(text="Go to Secondary Layout")
+        self.exit_button = Button(text = 'Exit')
+        self.secondary_button.bind(on_release=self.go_to_secondary_layout)
 
         layout = BoxLayout(orientation="vertical")
         layout.add_widget(self.surname_input)
         layout.add_widget(self.name_input)
         layout.add_widget(self.school_input)
         layout.add_widget(self.submit_button)
-        layout.add_widget(self.result_label)
-        layout.add_widget(self.console_output)
         layout.add_widget(self.exit_button)
 
-        return layout
+        layout.add_widget(self.secondary_button)
+        layout.add_widget(self.result_label)
+        layout.add_widget(self.console_output)
+
+        self.add_widget(layout)
 
     def process_input(self, instance):
         # Clear the result_label.text
@@ -110,9 +116,37 @@ class ConsoleApp(App):
         self.name_input.text = ''
         self.school_input.text = ''
 
-    def exit_app(self, instance):
-        App.get_running_app().stop()
+    def go_to_secondary_layout(self, instance):
+        self.manager.current = 'secondary'
+
+class SecondaryScreen(Screen):
+    def __init__(self, **kwargs):
+        super(SecondaryScreen, self).__init__(**kwargs)
+
+        self.secondary_label = Label(text="This is the Secondary Layout")
+        self.back_button = Button(text="Go Back to Main Layout")
+        self.back_button.bind(on_release=self.go_to_main_layout)
+
+        layout = BoxLayout(orientation="vertical")
+        layout.add_widget(self.secondary_label)
+        layout.add_widget(self.back_button)
+
+        self.add_widget(layout)
+
+    def go_to_main_layout(self, instance):
+        self.manager.current = 'main'
+
+class ConsoleApp(App):
+    def build(self):
+        screen_manager = ScreenManager()
+
+        main_screen = MainScreen(name='main')
+        secondary_screen = SecondaryScreen(name='secondary')
+
+        screen_manager.add_widget(main_screen)
+        screen_manager.add_widget(secondary_screen)
+
+        return screen_manager
 
 if __name__ == "__main__":
     ConsoleApp().run()
-

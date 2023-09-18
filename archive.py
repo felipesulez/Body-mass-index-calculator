@@ -27,7 +27,7 @@ class UserDataProcessor:
         elif UserInputValidator.contains_special_characters(string_data):
             return 'Warning, the input should not contain special characters'
         elif UserInputValidator.is_integer(string_data):
-            return 'The input should not be an integer'
+            return 'The values Surname, Name, and High School are not valid'
         else:
             return string_data
 
@@ -67,12 +67,13 @@ class ConsoleApp(App):
         self.result_label.text = ''
         
         surname_string = self.surname_input.text.strip()
-        try:
-            int(surname_string)
-            self.add_to_console(f'\n {surname_string} is not a string', 'bold magenta')
-        except ValueError:
-            name = self.name_input.text.strip()
-            school = self.school_input.text.strip()
+        name = self.name_input.text.strip()
+        school = self.school_input.text.strip()
+
+        if UserInputValidator.is_integer(surname_string) or UserInputValidator.is_integer(name) or UserInputValidator.is_integer(school):
+            # Display the invalid values message in the result_label
+            self.result_label.text = 'The values Surname, Name, and High School are not valid'
+        else:
             surname_text = f"My surname is {surname_string.capitalize()}"
             full_text = ''
             
@@ -98,8 +99,6 @@ class ConsoleApp(App):
                 self.result_label.text = self.result_label.text.rstrip(", ")  # Remove trailing comma
             else:
                 self.add_to_console('No valid values entered', 'bold magenta')
-        else:
-            self.add_to_console('These values are not strings', 'bold magenta')
 
     def add_to_console(self, text, style=''):
         current_text = self.console_output.text
@@ -116,5 +115,4 @@ class ConsoleApp(App):
 
 if __name__ == "__main__":
     ConsoleApp().run()
-
 

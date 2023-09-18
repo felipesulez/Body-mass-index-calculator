@@ -51,18 +51,17 @@ class MainScreen(Screen):
         self.school_input = TextInput(hint_text="Enter the name of your high school")
         self.submit_button = Button(text="Submit")
         self.submit_button.bind(on_release=self.process_input)
-        self.secondary_button = Button(text="Go to Secondary Layout")
-        self.exit_button = Button(text = 'Exit')
-        self.secondary_button.bind(on_release=self.go_to_secondary_layout)
 
         layout = BoxLayout(orientation="vertical")
+        layout.add_widget(Label(text="Main Layout", font_size=24))
+        layout.add_widget(Label(text="Surname:"))
         layout.add_widget(self.surname_input)
+        layout.add_widget(Label(text="Name:"))
         layout.add_widget(self.name_input)
+        layout.add_widget(Label(text="High School:"))
         layout.add_widget(self.school_input)
+        layout.add_widget(Label())  # Spacer
         layout.add_widget(self.submit_button)
-        layout.add_widget(self.exit_button)
-
-        layout.add_widget(self.secondary_button)
         layout.add_widget(self.result_label)
         layout.add_widget(self.console_output)
 
@@ -95,14 +94,8 @@ class MainScreen(Screen):
                 full_text += '\n'
                 self.add_to_console(full_text, 'bold magenta')
                 self.clear_input_fields()
-                self.result_label.text = "The following values are entered correctly: "
-                if name:
-                    self.result_label.text += "Name, "
-                if surname_string:
-                    self.result_label.text += "Surname, "
-                if school:
-                    self.result_label.text += "High School, "
-                self.result_label.text = self.result_label.text.rstrip(", ")  # Remove trailing comma
+                self.result_label.text = "The following values are entered correctly:"
+                self.show_in_secondary(surname_string, name, school)
             else:
                 self.add_to_console('No valid values entered', 'bold magenta')
 
@@ -116,25 +109,41 @@ class MainScreen(Screen):
         self.name_input.text = ''
         self.school_input.text = ''
 
-    def go_to_secondary_layout(self, instance):
+    def show_in_secondary(self, surname, name, school):
+        secondary_screen = self.manager.get_screen('secondary')
+        secondary_screen.update_labels(surname, name, school)
         self.manager.current = 'secondary'
 
 class SecondaryScreen(Screen):
     def __init__(self, **kwargs):
         super(SecondaryScreen, self).__init__(**kwargs)
 
-        self.secondary_label = Label(text="This is the Secondary Layout")
+        self.secondary_label = Label(text="Secondary Layout", font_size=24)
         self.back_button = Button(text="Go Back to Main Layout")
         self.back_button.bind(on_release=self.go_to_main_layout)
+
+        # Labels to display values from the Main layout
+        self.surname_label = Label(markup=True)
+        self.name_label = Label(markup=True)
+        self.school_label = Label(markup=True)
 
         layout = BoxLayout(orientation="vertical")
         layout.add_widget(self.secondary_label)
         layout.add_widget(self.back_button)
+        layout.add_widget(Label())  # Spacer
+        layout.add_widget(self.surname_label)
+        layout.add_widget(self.name_label)
+        layout.add_widget(self.school_label)
 
         self.add_widget(layout)
 
     def go_to_main_layout(self, instance):
         self.manager.current = 'main'
+
+    def update_labels(self, surname, name, school):
+        self.surname_label.text = f"[b]Surname:[/b] {surname.capitalize()}\n" if surname else ''
+        self.name_label.text = f"[b]Name:[/b] {name}\n" if name else ''
+        self.school_label.text = f"[b]High School:[/b] {school}\n" if school else ''
 
 class ConsoleApp(App):
     def build(self):
@@ -150,3 +159,4 @@ class ConsoleApp(App):
 
 if __name__ == "__main__":
     ConsoleApp().run()
+

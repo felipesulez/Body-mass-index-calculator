@@ -49,6 +49,8 @@ class MainScreen(Screen):
         self.surname_input = TextInput(hint_text="Enter your surname (type 'exit' to quit)")
         self.name_input = TextInput(hint_text="Enter your name")
         self.school_input = TextInput(hint_text="Enter the name of your high school")
+        self.height_input = TextInput(hint_text='Enter your height')
+        self.weight_input = TextInput(hint_text='Enter your weight')
         self.submit_button = Button(text="Submit")
         self.submit_button.bind(on_release=self.process_input)
 
@@ -60,6 +62,10 @@ class MainScreen(Screen):
         layout.add_widget(self.name_input)
         layout.add_widget(Label(text="High School:"))
         layout.add_widget(self.school_input)
+        layout.add_widget(Label(text='Height:'))
+        layout.add_widget(self.height_input)
+        layout.add_widget(Label(text='Weight:'))
+        layout.add_widget(self.weight_input)
         layout.add_widget(Label())  # Spacer
         layout.add_widget(self.submit_button)
         layout.add_widget(self.result_label)
@@ -70,34 +76,46 @@ class MainScreen(Screen):
     def process_input(self, instance):
         # Clear the result_label.text
         self.result_label.text = ''
-        
+
         surname_string = self.surname_input.text.strip()
         name = self.name_input.text.strip()
         school = self.school_input.text.strip()
 
-        if UserInputValidator.is_integer(surname_string) or UserInputValidator.is_integer(name) or UserInputValidator.is_integer(school):
-            # Display the invalid values message in the result_label
-            self.result_label.text = 'The values Surname, Name, and High School are not valid'
+        height = self.height_input.text.strip()
+        weight = self.weight_input.text.strip()
+
+        # Check if height and weight are integers
+        if not (height.isdigit() and weight.isdigit()):
+            # Display a message if height or weight are not integers
+            self.result_label.text = 'Height and Weight should be integers'
         else:
-            surname_text = f"My surname is {surname_string.capitalize()}"
-            full_text = ''
-            
-            # Check which values are entered and build the message accordingly
-            if name:
-                full_text += UserDataProcessor.greetings(name)
-            if surname_string:
-                full_text += f"{' and ' if full_text else ''}{surname_text}"
-            if school:
-                full_text += f"{' and ' if full_text else ''}{UserDataProcessor.high_school(school)}"
-            
-            if full_text:
-                full_text += '\n'
-                self.add_to_console(full_text, 'bold magenta')
-                self.clear_input_fields()
-                self.result_label.text = "The following values are entered correctly:"
-                self.show_in_secondary(surname_string, name, school)
+            # Check if other values are missing
+            if not (name and surname_string and school):
+                self.result_label.text = 'Missing values'
             else:
-                self.add_to_console('No valid values entered', 'bold magenta')
+                surname_text = f"My surname is {surname_string.capitalize()}"
+                full_text = ''
+
+                # Check which values are entered and build the message accordingly
+                if name:
+                    full_text += UserDataProcessor.greetings(name)
+                if surname_string:
+                    full_text += f"{' and ' if full_text else ''}{surname_text}"
+                if school:
+                    full_text += f"{' and ' if full_text else ''}{UserDataProcessor.high_school(school)}"
+                if height:
+                    full_text += f"{' and ' if full_text else ''}My height is {height} cm"
+                if weight:
+                    full_text += f"{' and ' if full_text else ''}My weight is {weight} kg"
+
+                if full_text:
+                    full_text += '\n'
+                    self.add_to_console(full_text, 'bold magenta')
+                    self.clear_input_fields()
+                    self.result_label.text = "The following values are entered correctly:"
+                    self.show_in_secondary(surname_string, name, school, height, weight)
+                else:
+                    self.result_label.text = 'Missing values'
 
     def add_to_console(self, text, style=''):
         current_text = self.console_output.text
@@ -108,10 +126,12 @@ class MainScreen(Screen):
         self.surname_input.text = ''
         self.name_input.text = ''
         self.school_input.text = ''
+        self.height_input.text = ''
+        self.weight_input.text = ''
 
-    def show_in_secondary(self, surname, name, school):
+    def show_in_secondary(self, surname, name, school, height, weight):
         secondary_screen = self.manager.get_screen('secondary')
-        secondary_screen.update_labels(surname, name, school)
+        secondary_screen.update_labels(surname, name, school, height, weight)
         self.manager.current = 'secondary'
 
 class SecondaryScreen(Screen):
@@ -126,6 +146,8 @@ class SecondaryScreen(Screen):
         self.surname_label = Label(markup=True)
         self.name_label = Label(markup=True)
         self.school_label = Label(markup=True)
+        self.height_label = Label(markup=True)
+        self.weight_label = Label(markup=True)
 
         layout = BoxLayout(orientation="vertical")
         layout.add_widget(self.secondary_label)
@@ -134,16 +156,20 @@ class SecondaryScreen(Screen):
         layout.add_widget(self.surname_label)
         layout.add_widget(self.name_label)
         layout.add_widget(self.school_label)
+        layout.add_widget(self.height_label)
+        layout.add_widget(self.weight_label)
 
         self.add_widget(layout)
 
     def go_to_main_layout(self, instance):
         self.manager.current = 'main'
 
-    def update_labels(self, surname, name, school):
+    def update_labels(self, surname, name, school, height, weight):
         self.surname_label.text = f"[b]Surname:[/b] {surname.capitalize()}\n" if surname else ''
         self.name_label.text = f"[b]Name:[/b] {name}\n" if name else ''
         self.school_label.text = f"[b]High School:[/b] {school}\n" if school else ''
+        self.height_label.text = f"[b]Height:[/b] {height} cm\n" if height else ''
+        self.weight_label.text = f"[b]Weight:[/b] {weight} kg\n" if weight else ''
 
 class ConsoleApp(App):
     def build(self):
@@ -159,4 +185,3 @@ class ConsoleApp(App):
 
 if __name__ == "__main__":
     ConsoleApp().run()
-

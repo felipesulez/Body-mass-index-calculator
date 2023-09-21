@@ -111,34 +111,34 @@ class MainScreen(Screen):
             # Display a message if height or weight are not integers
             self.result_label.text = 'Height and Weight should be integers'
         else:
-            # Check if other values are missing
-            if not (name and surname_string and school):
-                self.result_label.text = 'Missing values'
-            else:
+            try:
                 # Calculate BMI
                 height = int(height)
                 weight = int(weight)
                 bmi = (weight / ((height / 100) ** 2))
+            except ZeroDivisionError:
+                self.result_label.text = 'Zero Division Error'
+                return
 
-                surname_text = f"My surname is {surname_string.capitalize()}"
-                full_text = ''
+            surname_text = f"My surname is {surname_string.capitalize()}"
+            full_text = ''
 
-                # Check which values are entered and build the message accordingly
-                if name:
-                    full_text += UserDataProcessor.greetings(name)
-                if surname_string:
-                    full_text += f"{' and ' if full_text else ''}{surname_text}"
-                if school:
-                    full_text += f"{' and ' if full_text else ''}{UserDataProcessor.high_school(school)}"
+            # Check which values are entered and build the message accordingly
+            if name:
+                full_text += UserDataProcessor.greetings(name)
+            if surname_string:
+                full_text += f"{' and ' if full_text else ''}{surname_text}"
+            if school:
+                full_text += f"{' and ' if full_text else ''}{UserDataProcessor.high_school(school)}"
 
-                if full_text:
-                    full_text += '\n'
-                    self.add_to_console(full_text, 'bold magenta')
-                    self.clear_input_fields()
-                    self.result_label.text = "The following values are entered correctly:"
-                    self.show_in_secondary(surname_string, name, school, height, weight, bmi)
-                else:
-                    self.add_to_console('No valid values entered', 'bold magenta')
+            if full_text:
+                full_text += '\n'
+                self.add_to_console(full_text, 'bold magenta')
+                self.clear_input_fields()
+                self.result_label.text = "The following values are entered correctly:"
+                self.show_in_secondary(surname_string, name, school, height, weight, bmi)
+            else:
+                self.add_to_console('No valid values entered', 'bold magenta')
 
     def add_to_console(self, text, style=''):
         current_text = self.console_output.text

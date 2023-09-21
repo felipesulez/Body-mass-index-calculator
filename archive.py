@@ -1,11 +1,13 @@
 import re
-import math
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 class UserInputValidator:
     @staticmethod
@@ -20,26 +22,6 @@ class UserInputValidator:
             return True
         except ValueError:
             return False
-
-class UserDataProcessor:
-    @staticmethod
-    def get_valid_string_input(string_data):
-        if string_data.lower() == 'exit':
-            return None
-        elif UserInputValidator.contains_special_characters(string_data):
-            return 'Warning, the input should not contain special characters'
-        elif UserInputValidator.is_integer(string_data):
-            return f'The value "{string_data}" is not valid'
-        else:
-            return string_data
-
-    @staticmethod
-    def greetings(name):
-        return f"My name is {name}"
-
-    @staticmethod
-    def high_school(name):
-        return f"The name of my high school is {name}"
 
 class MainScreen(Screen):
     def __init__(self, **kwargs):
@@ -92,53 +74,57 @@ class MainScreen(Screen):
         height = self.height_input.text.strip()
         weight = self.weight_input.text.strip()
 
-        if UserInputValidator.is_integer(surname_string) or UserInputValidator.is_integer(name) or UserInputValidator.is_integer(school):
-            # Display the invalid values message in the result_label
-            invalid_values = []
-            if UserInputValidator.is_integer(surname_string):
-                invalid_values.append(f'Surname ({surname_string})')
-            if UserInputValidator.is_integer(name):
-                invalid_values.append(f'Name ({name})')
-            if UserInputValidator.is_integer(school):
-                invalid_values.append(f'High School ({school})')
+        # Validación robusta
+        invalid_values = []
 
-            if invalid_values:
-                invalid_values_str = ', '.join(invalid_values)
-                self.result_label.text = f'The following values are not valid: {invalid_values_str}'
-            else:
-                self.result_label.text = 'Height and Weight should be integers'
-        elif not (height.isdigit() and weight.isdigit()):
+        if UserInputValidator.is_integer(surname_string):
+            invalid_values.append(f'Surname ({surname_string})')
+        if UserInputValidator.is_integer(name):
+            invalid_values.append(f'Name ({name})')
+        if UserInputValidator.is_integer(school):
+            invalid_values.append(f'High School ({school})')
+
+        if invalid_values:
+            invalid_values_str = ', '.join(invalid_values)
+            self.result_label.text = f'The following values are not valid: {invalid_values_str}'
+            return
+
+        if not height.isdigit() or not weight.isdigit():
             # Display a message if height or weight are not integers
             self.result_label.text = 'Height and Weight should be integers'
+            return
+
+        if not (name and surname_string and school):
+            self.result_label.text = 'Missing values'
+            return
+
+        try:
+            # Calculate BMI
+            height = int(height)
+            weight = int(weight)
+            bmi = (weight / ((height / 100) ** 2))
+        except ZeroDivisionError:
+            self.result_label.text = 'Zero Division Error'
+            return
+
+        surname_text = f"My surname is {surname_string.capitalize()}"
+        full_text = ''
+
+        # Check which values are entered and build the message accordingly
+        if name:
+            full_text += f"My name is {name}\n"
+        if surname_string:
+            full_text += f"My surname is {surname_string.capitalize()}\n"
+        if school:
+            full_text += f"The name of my high school is {school}\n"
+
+        if full_text:
+            self.add_to_console(full_text, 'bold magenta')
+            self.clear_input_fields()
+            self.result_label.text = "The following values are entered correctly:"
+            self.show_in_secondary(surname_string, name, school, height, weight, bmi)
         else:
-            try:
-                # Calculate BMI
-                height = int(height)
-                weight = int(weight)
-                bmi = (weight / ((height / 100) ** 2))
-            except ZeroDivisionError:
-                self.result_label.text = 'Zero Division Error'
-                return
-
-            surname_text = f"My surname is {surname_string.capitalize()}"
-            full_text = ''
-
-            # Check which values are entered and build the message accordingly
-            if name:
-                full_text += UserDataProcessor.greetings(name)
-            if surname_string:
-                full_text += f"{' and ' if full_text else ''}{surname_text}"
-            if school:
-                full_text += f"{' and ' if full_text else ''}{UserDataProcessor.high_school(school)}"
-
-            if full_text:
-                full_text += '\n'
-                self.add_to_console(full_text, 'bold magenta')
-                self.clear_input_fields()
-                self.result_label.text = "The following values are entered correctly:"
-                self.show_in_secondary(surname_string, name, school, height, weight, bmi)
-            else:
-                self.add_to_console('No valid values entered', 'bold magenta')
+            self.add_to_console('No valid values entered', 'bold magenta')
 
     def add_to_console(self, text, style=''):
         current_text = self.console_output.text
@@ -204,7 +190,17 @@ class SecondaryScreen(Screen):
         self.school_label.text = f"[b]High School:[/b] {school}\n" if school else ''
         self.height_label.text = f"[b]Height:[/b] {height} cm\n" if height else ''
         self.weight_label.text = f"[b]Weight:[/b] {weight} kg\n" if weight else ''
-        self.bmi_label.text = f"[b]BMI:[/b] {bmi:.2f}\n" if bmi else ''
+        self.bmi_label.text = f"[b]BMI:[/b] {bmi:.2f} - {self.get_bmi_status(bmi)}\n" if bmi else ''
+
+    def get_bmi_status(self, bmi):
+        if bmi < 18.5:
+            return "Underweight"
+        elif 18.5 <= bmi < 25.0:
+            return "Healthy Weight"
+        elif 25.0 <= bmi < 30.0:
+            return "Overweight"
+        else:
+            return "Obesity"
 
 class ConsoleApp(App):
     def build(self):

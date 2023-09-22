@@ -43,4 +43,18 @@ The app categorizes your BMI result into the following categories:
    ```bash
    git clone https://github.com/felipesulez/Body-mass-index-calculator.git
 
+2. Install the required dependencies:
+   ```bash
+   pip install kivy
 
+3. Run the app:
+    ```bash
+    python archive.py
+    
+## Author
+
+Felipe Antonio Sulez Gomez 
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE.md file for details.

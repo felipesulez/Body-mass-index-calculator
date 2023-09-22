@@ -36,31 +36,10 @@ Underweight: BMI less than 18.5
 Healthy Weight: BMI between 18.5 and 24.9
 Overweight: BMI between 25.0 and 29.9
 Obesity: BMI 30.0 or greater
+
 Dependencies
 Kivy: The app is built using the Kivy framework for the graphical user interface.
-Python: The app is written in Python 3.
-Installation
-Clone the repository:
-
-bash
-Copy code
-git clone https://github.com/felipesulez/Body-mass-index-calculator.git
-Install the required dependencies:
-
-bash
-Copy code
-pip install kivy
-Run the app:
-
-bash
-Copy code
-python main.py
-Author
-Your Name: Felipe Antonio Sulez Gomez
-License
-This project is licensed under the MIT License. See the LICENSE.md file for details.
-
-
+Python: The app is written in Python 3.11.5
 
 
 

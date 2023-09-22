@@ -22,19 +22,25 @@ Robust validation to prevent integers from being entered as names or high school
 BMI calculation based on the entered height and weight.
 A secondary screen that displays the entered values and BMI result with a BMI status (underweight, healthy weight, overweight, or obesity).
 
+## BMI Categories
 
-
-BMI Categories
 The app categorizes your BMI result into the following categories:
 
-Underweight: BMI less than 18.5
-Healthy Weight: BMI between 18.5 and 24.9
-Overweight: BMI between 25.0 and 29.9
-Obesity: BMI 30.0 or greater
+- **Underweight:** BMI less than 18.5
+- **Healthy Weight:** BMI between 18.5 and 24.9
+- **Overweight:** BMI between 25.0 and 29.9
+- **Obesity:** BMI 30.0 or greater
 
-Dependencies
-Kivy: The app is built using the Kivy framework for the graphical user interface.
-Python: The app is written in Python 3.11.5
+## Dependencies
 
+- Kivy: The app is built using the Kivy framework for the graphical user interface.
+- Python: The app is written in Python 3.
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/felipesulez/Body-mass-index-calculator.git
 
 

@@ -5,9 +5,8 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
-import ssl
 
-ssl._create_default_https_context = ssl._create_unverified_context
+
 
 class UserInputValidator:
     @staticmethod

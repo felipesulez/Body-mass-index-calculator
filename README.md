@@ -22,12 +22,7 @@ Robust validation to prevent integers from being entered as names or high school
 BMI calculation based on the entered height and weight.
 A secondary screen that displays the entered values and BMI result with a BMI status (underweight, healthy weight, overweight, or obesity).
 
-Screenshots
-Main Screen
-![D4B3F3EC-C98D-43D0-90B3-BC2464BF6876_1_201_a](https://github.com/felipesulez/Body-mass-index-calculator/assets/71064928/72ac4259-3b54-4d94-8cf7-b5837629b0ce)
 
-Secondary Screen
-![52D84106-8E5C-4F5E-8A58-D315A9440500](https://github.com/felipesulez/Body-mass-index-calculator/assets/71064928/364b2dd9-dd4f-4c5a-b3f9-67739d6ea957)
 
 BMI Categories
 The app categorizes your BMI result into the following categories:

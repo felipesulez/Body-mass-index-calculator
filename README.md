@@ -31,6 +31,12 @@ The app categorizes your BMI result into the following categories:
 - **Overweight:** BMI between 25.0 and 29.9
 - **Obesity:** BMI 30.0 or greater
 
+## Screenshots
+
+![Main Screen](screenshots/Main.png)
+
+![Secondary Screen](screenshots/Second.png)
+
 ## Dependencies
 
 - Kivy: The app is built using the Kivy framework for the graphical user interface.
